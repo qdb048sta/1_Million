@@ -29,8 +29,8 @@ if `year2'==2005{
                    local march20="0319"
                 }
 
-local datatype = "temp"
-//local datatype = "all"
+//local datatype = "temp"
+local datatype = "all"
 
 global dataCD04temp "CD`year1'_one_tenth.dta"
 global dataCD04all  "CD`year1'.dta"
@@ -285,6 +285,7 @@ global sex "M F"
 global B "1"
 local bwidth "3"
 keep if abs(R)<=$dayrange1
+foreach age of num 1/7{
 foreach bwidth of global B{
 foreach gap of num 0/1{
 foreach sex of global sex{
@@ -305,10 +306,10 @@ if "`bwidth'"=="0"{
 
 #delimit ;
 tw
-(connect m3Dcd Rw3 if age_group>=4  & sex=="`sex'" &  gap==`gap'  & abs(Rw3)<=$wrange1&Rw3n==1, ),
+(connect m3Dcd Rw3 if age_group==`age'  & sex=="`sex'" &  gap==`gap'  & abs(Rw3)<=$wrange1&Rw3n==1, ),
 title("mean `year1'-`year2'  outpatient visits" 
       "$wrange1 weeks surrounding election day"
-      "Sex = `sex',  Bandwidth = `bwidth1'"
+      "Sex = `sex',  Bandwidth = `bwidth1' Agegroup=`age'"
       "Wednesday is the first day of the week"
       , size(medium)
       )
@@ -322,14 +323,14 @@ xtitle("Weeks after election")
 xline(0)
 ;
 #delimit cr
-graph export Outpatient`yr1'`yr2'_Weeks-`wrange'_Sex-`sex'_mean_Saturday_gap`gap'.pdf,as(pdf) replace
+graph export Outpatient`yr1'`yr2'_Weeks-`wrange'_Sex-`sex'_mean_Saturday_gap`gap'_agegroup`age'.pdf,as(pdf) replace
 
 #delimit ;
 tw 
-(connect m3Dpsy Rw3 if age_group>=4  & sex=="`sex'" &  gap==`gap'   & abs(Rw3)<=$wrange1&Rw3n==1 ),
+(connect m3Dpsy Rw3 if age_group==`age' & sex=="`sex'" &  gap==`gap'   & abs(Rw3)<=$wrange1&Rw3n==1 ),
 title("mean `year1'-`year2' outpatient visits---psychological" 
       "$wrange1 weeks surrounding election day"
-      "Sex = `sex',  Bandwidth = `bwidth1'"
+      "Sex = `sex',  Bandwidth = `bwidth1' Agegroup=`age'"
       "Wednesday is the first day of the week"
       , size(medium))
 legend(label(1 "`male', aged 40 ")
@@ -343,16 +344,16 @@ xtitle("Weeks after election")
 xline(0)
 ;
 #delimit cr
-graph export Psycho`yr1'`yr2'_Weeks-`wrange'_Sex-`sex'_mean_Wednesday_gap`gap'.pdf ,as(pdf) replace
+graph export Psycho`yr1'`yr2'_Weeks-`wrange'_Sex-`sex'_mean_Wednesday_gap`gap'_agegroup`age'.pdf ,as(pdf) replace
 
 
 /* */
 #delimit ;
 tw
-(connect m3cd_`year1' Rw3 if age_group>=4  & sex=="`sex'" &  gap==`gap'   & abs(Rw3)<=$wrange1&Rw3n==1, ),
+(connect m3cd_`year1' Rw3 if age_group==`age'  & sex=="`sex'" &  gap==`gap'   & abs(Rw3)<=$wrange1&Rw3n==1, ),
 title("mean `year1'  outpatient visits" 
       "$wrange1 weeks surrounding election day"
-      "Sex = `sex',  Bandwidth = `bwidth1'"
+      "Sex = `sex',  Bandwidth = `bwidth1' Agegroup=`age'"
       "Wednesday is the first day of the week"
       , size(medium)
       )
@@ -366,14 +367,14 @@ xtitle("Weeks after election")
 xline(0)
 ;
 #delimit cr
-graph export Outpatient`yr1'_Weeks-`wrange'_Sex-`sex'_mean_Wednesday_gap`gap'.pdf,as(pdf) replace
+graph export Outpatient`yr1'_Weeks-`wrange'_Sex-`sex'_mean_Wednesday_gap`gap'_agegroup`age'.pdf,as(pdf) replace
 
 #delimit ;
 tw 
-(connect m3psy_`year1' Rw3 if age_group>=4  & sex=="`sex'" &  gap==`gap'   & abs(Rw3)<=$wrange1&Rw3n==1 ),
+(connect m3psy_`year1' Rw3 if age_group==`age'  & sex=="`sex'" &  gap==`gap'   & abs(Rw3)<=$wrange1&Rw3n==1 ),
 title("mean `year1' outpatient visits---psychological" 
       "$wrange1 weeks surrounding election day"
-      "Sex = `sex',  Bandwidth = `bwidth1'"
+      "Sex = `sex',  Bandwidth = `bwidth1' Agegroup=`age'"
       "Wednesday is the first day of the week"
       , size(medium))
 legend(label(1 "`male', aged 40 ")
@@ -387,15 +388,15 @@ xtitle("Weeks after election")
 xline(0)
 ;
 #delimit cr
-graph export Psycho`yr1'_Weeks-`wrange'_Sex-`sex'_mean_Wedneday_gap`gap'.pdf ,as(pdf) replace
+graph export Psycho`yr1'_Weeks-`wrange'_Sex-`sex'_mean_Wedneday_gap`gap'_agegroup`age'.pdf ,as(pdf) replace
 
 
 #delimit ;
 tw
-(connect m3cd_`year2' Rw3 if age_group>=4  & sex=="`sex'" &  gap==`gap'   & abs(Rw3)<=$wrange1&Rw3n==1, ),
+(connect m3cd_`year2' Rw3 if age_group==`age'  & sex=="`sex'" &  gap==`gap'   & abs(Rw3)<=$wrange1&Rw3n==1, ),
 title("mean `year2'  outpatient visits" 
       "$wrange1 weeks surrounding election day"
-      "Sex = `sex',  Bandwidth = `bwidth1'"
+      "Sex = `sex',  Bandwidth = `bwidth1' Agegroup=`age'"
       "Wednesday-Tuesday Weekly Average"
       , size(medium)
       )
@@ -409,14 +410,14 @@ xtitle("Weeks after election")
 xline(0)
 ;
 #delimit cr
-graph export Outpatient`yr2'_Weeks-`wrange'_Sex-`sex'_mean_Wednesday_gap`gap'.pdf,as(pdf) replace
+graph export Outpatient`yr2'_Weeks-`wrange'_Sex-`sex'_mean_Wednesday_gap`gap'_agegroup`age'.pdf,as(pdf) replace
 
 #delimit ;
 tw 
-(connect m3psy_`year2' Rw3 if age_group>=4  & sex=="`sex'" &  gap==`gap'   & abs(Rw3)<=$wrange1&Rw3n==1 ),
+(connect m3psy_`year2' Rw3 if age_group==`age'  & sex=="`sex'" &  gap==`gap'   & abs(Rw3)<=$wrange1&Rw3n==1 ),
 title("mean `year2' outpatient visits---psychological" 
       "$wrange1 weeks surrounding election day"
-      "Sex = `sex',  Bandwidth = `bwidth1'"
+      "Sex = `sex',  Bandwidth = `bwidth1' Agegroup=`age'"
       "Wednesday-Tuesday Weekly Average"
       , size(medium))
 legend(label(1 "`male', aged 40 ")
@@ -430,14 +431,14 @@ xtitle("Weeks after election")
 xline(0)
 ;
 #delimit cr
-graph export Psycho`yr2'_Weeks-`wrange'_Sex-`sex'_mean_Wednesday_gap`gap'.pdf ,as(pdf) replace
+graph export Psycho`yr2'_Weeks-`wrange'_Sex-`sex'_mean_Wednesday_gap`gap'_agegroup`age'.pdf ,as(pdf) replace
 
 
 
 } /* sex */
 } /* gap */
 } /* bwidth */
-
+} /* agegroup */
 log close 
 
 
