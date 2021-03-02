@@ -1,0 +1,501 @@
+------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  D:\User_Data\Documents\GitHub\1_Million\cd20210211weekd.log
+  log type:  text
+ opened on:   2 Mar 2021, 17:01:50
+
+. 
+. // global datapath "F:\1Million\Documentation\"
+. global datapath "D:\User_Data\Desktop\kan-2\1_Million\"
+
+. // global datapath "d:\1Million\Documentation\"
+. global dayrange "60" 
+
+. global wrange "8"
+
+. local  dayrange =$dayrange
+
+. local  wrange =$wrange
+
+. local year1=2004
+
+. local year2=2005
+
+. local yr1=substr("`year1'",3,2)
+
+. local yr2=substr("`year2'",3,2)
+
+. if `year2'==2006{
+.                    local march20="0318"
+.                 }
+
+. if `year2'==2005{
+.                    local march20="0319"
+.                 }
+
+. 
+. local datatype = "temp"
+
+. // local datatype = "all"
+. 
+. global dataCD04temp "CD`year1'_one_tenth.dta"
+
+. global dataCD04all  "CD`year1'.dta"
+
+. 
+. global dataCD05temp "CD`year2'_one_tenth.dta"
+
+. global dataCD05all  "CD`year2'.dta"
+
+. 
+. //create R(+-30 days of specific Saturday `year1'0320 )
+. use $datapath\${dataCD04`datatype'} ,clear
+
+. 
+. preserve
+
+. // gen R1=date(FUNC_DATE,"YMD")
+. // gen Rw6=wofd(R1-2)
+. //gen Rw =wofd(R1)
+. gen R=date(FUNC_DATE,"YMD")-date("`year1'0320","YMD")
+(260,231 missing values generated)
+
+. gen abs_R=abs(R)
+(260,231 missing values generated)
+
+. keep if abs_R<=$dayrange
+(308,679 observations deleted)
+
+. sort FUNC_DATE
+
+. tempfile unique_R
+
+. keep R
+
+. duplicates drop 
+
+Duplicates in terms of all variables
+
+(22,844 observations deleted)
+
+. save `unique_R',replace
+(note: file C:\Users\user\AppData\Local\Temp\ST_4ea4_000002.tmp not found)
+file C:\Users\user\AppData\Local\Temp\ST_4ea4_000002.tmp saved
+
+. restore
+
+. 
+. drop if ID==""
+(260,231 observations deleted)
+
+. tempfile id`year1'
+
+. keep ID ID_BIRTHDAY ID_SEX
+
+. qui compress
+
+. save `id`year1'',replace
+(note: file C:\Users\user\AppData\Local\Temp\ST_4ea4_000003.tmp not found)
+file C:\Users\user\AppData\Local\Temp\ST_4ea4_000003.tmp saved
+
+. 
+. 
+. 
+. use $datapath\${dataCD05`datatype'} ,clear
+
+. drop if ID==""
+(331,644 observations deleted)
+
+. tempfile id0405
+
+. keep ID ID_BIRTHDAY ID_SEX
+
+. append using `id`year1''
+
+. duplicates drop
+
+Duplicates in terms of all variables
+
+(143,482 observations deleted)
+
+. qui compress
+
+. save `id0405',replace
+(note: file C:\Users\user\AppData\Local\Temp\ST_4ea4_000004.tmp not found)
+file C:\Users\user\AppData\Local\Temp\ST_4ea4_000004.tmp saved
+
+. 
+. 
+. use `id0405',clear
+
+. duplicates drop
+
+Duplicates in terms of all variables
+
+(0 observations are duplicates)
+
+. cross using `unique_R'
+
+. tempfile unique_R_cross_ID
+
+. count
+  516,186
+
+. qui compress
+
+. save `unique_R_cross_ID',replace
+(note: file C:\Users\user\AppData\Local\Temp\ST_4ea4_000005.tmp not found)
+file C:\Users\user\AppData\Local\Temp\ST_4ea4_000005.tmp saved
+
+. 
+. 
+. use $datapath\${dataCD04`datatype'} ,clear
+
+. gen R1=date(FUNC_DATE,"YMD")
+(260,231 missing values generated)
+
+. gen Rw6=wofd(R1-2)
+(260,231 missing values generated)
+
+. gen Rw =wofd(R1)
+(260,231 missing values generated)
+
+. gen R=date(FUNC_DATE,"YMD")-date("`year1'0320","YMD")
+(260,231 missing values generated)
+
+. gen abs_R=abs(R)
+(260,231 missing values generated)
+
+. keep if abs_R<=$dayrange
+(308,679 observations deleted)
+
+. global spirit = "290/319 319"
+
+. qui icd9 check ACODE_ICD9_1   ,  gen(ivicd1)
+ACODE_ICD9_1 contains invalid codes:
+
+. qui icd9  gen  ICD_spirit = ACODE_ICD9_1     if  (ivicd1 ==0 ) , range("$spirit")       /*icd9*/
+
+. gen cd_count=1
+
+. gen cd_spirit_count=1 if ICD_spirit==1
+(22,438 missing values generated)
+
+. 
+. /*For each R and ID count it's CD record happened in `year1' i.g ID:E110000000 went to clinic for de
+> pressive disorder twice on `year1'/03/18 then 
+> it will record 2 on ID:E110000000 R:-2 CD`year1'=2 cd`year1'_spirit=2 
+> */
+. egen cd_`year1'=sum(cd_count), by(ID R)
+
+. egen cd_`year1'_spirit=sum(cd_spirit_count) if ICD_spirit==1 , by(ID R)
+(22,438 missing values generated)
+
+. replace cd_`year1'=0 if missing(cd_`year1')
+(0 real changes made)
+
+. replace cd_`year1'_spirit=0 if missing(cd_`year1'_spirit)
+(22,438 real changes made)
+
+. keep ID R ID_BIRTHDAY cd_`year1' cd_`year1'_spirit 
+
+. duplicates drop ID R, force
+
+Duplicates in terms of ID R
+
+(2,311 observations deleted)
+
+. tempfile ID_R_CD_`year1'
+
+. qui compress
+
+. save `ID_R_CD_`year1'',replace
+(note: file C:\Users\user\AppData\Local\Temp\ST_4ea4_000006.tmp not found)
+file C:\Users\user\AppData\Local\Temp\ST_4ea4_000006.tmp saved
+
+. //0319
+. use $datapath\${dataCD05`datatype'},clear
+
+. gen R=date(FUNC_DATE,"YMD")-date("`year2'`march20'","YMD")
+(331,644 missing values generated)
+
+. gen abs_R=abs(R)
+(331,644 missing values generated)
+
+. keep if abs_R<=$dayrange
+(381,940 observations deleted)
+
+. global spirit = "290/319 319"
+
+. qui icd9 check ACODE_ICD9_1   ,  gen(ivicd1)
+ACODE_ICD9_1 contains invalid codes:
+
+. qui icd9  gen  ICD_spirit = ACODE_ICD9_1     if  (ivicd1 ==0 ) , range("$spirit")       /*icd9*/
+
+. gen cd_count=1
+
+. gen cd_spirit_count=1 if ICD_spirit==1
+(25,486 missing values generated)
+
+. egen cd_`year2'=sum(cd_count), by(ID R)
+
+. egen cd_`year2'_spirit=sum(cd_count) if ICD_spirit==1 , by(ID R)
+(25,486 missing values generated)
+
+. replace cd_`year2'=0 if missing(cd_`year2'_spirit)
+(25,486 real changes made)
+
+. replace cd_`year2'_spirit=0 if missing(cd_`year2'_spirit)
+(25,486 real changes made)
+
+. tempfile ID_R_CD_`year2'
+
+. keep ID R ID_BIRTHDAY cd_`year2' cd_`year2'_spirit 
+
+. duplicates drop ID R, force
+
+Duplicates in terms of ID R
+
+(2,794 observations deleted)
+
+. qui compress
+
+. save `ID_R_CD_`year2'',replace
+(note: file C:\Users\user\AppData\Local\Temp\ST_4ea4_000007.tmp not found)
+file C:\Users\user\AppData\Local\Temp\ST_4ea4_000007.tmp saved
+
+. 
+. 
+. use `unique_R_cross_ID'
+
+. joinby ID R using `ID_R_CD_`year1'',unmatched(master)
+
+. drop _merge
+
+. joinby ID R using `ID_R_CD_`year2'',unmatched(master)
+
+. drop _merge
+
+. qui compress
+
+. 
+. 
+. replace cd_`year1'=0 if missing(cd_`year1')
+(495,259 real changes made)
+
+. replace cd_`year1'_spirit=0 if missing(cd_`year1'_spirit)
+(495,259 real changes made)
+
+. replace cd_`year2'=0 if missing(cd_`year2')
+(492,634 real changes made)
+
+. replace cd_`year2'_spirit=0 if missing(cd_`year2'_spirit)
+(492,634 real changes made)
+
+. 
+. 
+. destring ID_BIRTHDAY,replace
+ID_BIRTHDAY: all characters numeric; replaced as long
+
+. bysort ID :egen birth = max(ID_BIRTHDAY)
+
+. qui gen sex0 = 1 if ID_SEX=="M"
+
+. qui replace sex0 = 0 if ID_SEX=="F"
+
+. bysort ID :egen sex = max(sex0)
+
+. tostring sex,replace
+sex was float now str1
+
+. qui replace sex = "M" if sex=="1"
+
+. qui replace sex = "F" if sex=="0"
+
+. cap drop sex0
+
+. 
+. egen IDN=count(ID),by(ID)
+
+. tab IDN
+
+        IDN |      Freq.     Percent        Cum.
+------------+-----------------------------------
+        121 |    503,844       97.61       97.61
+        242 |     12,342        2.39      100.00
+------------+-----------------------------------
+      Total |    516,186      100.00
+
+. drop if IDN !=1+($dayrange)*2
+(12,342 observations deleted)
+
+. save CD`year1'_`year2',replace
+file CD2004_2005.dta saved
+
+. 
+. 
+. 
+. 
+. global dayrange1 =$dayrange
+
+. global wrange1 =$wrange
+
+. 
+. 
+. tostring ID_BIRTHDAY, replace
+ID_BIRTHDAY was long now str6
+
+. replace ID_BIRTHDAY=ID_BIRTHDAY+"20"
+variable ID_BIRTHDAY was str6 now str8
+(503,844 real changes made)
+
+. gen D_ID_BIRTHDAY=date("`year1'0320","YMD")-date(ID_BIRTHDAY,"YMD")
+
+. cap drop age1019 age2029 age3039 age4049 age5059 age6069 age7099
+
+. 
+. global age ="10 20 30 40 50 60 70"
+
+. foreach age of global age{
+  2. local `age'_min  = `year1' - `age'
+  3. local `age'_max  = `year1' - (`age'+10)
+  4. 
+. scalar min_`age'=date("`year1'0320","YMD")-date("``age'_min'0320","YMD")
+  5. scalar max_`age'=date("`year1'0320","YMD")-date("``age'_max'0320","YMD")
+  6. local c=substr("`age'",1,1)
+  7. local age1=`age'+9 + (`c'==7)*20
+  8. local gr="gen"
+  9. if `c'>1{
+ 10.             local gr="replace"
+ 11.           }
+ 12. `gr'  age_group=`c' if D_ID_BIRTHDAY>= min_`age' & D_ID_BIRTHDAY< max_`age'
+ 13. gen     age`age'`age1'  = age_group==`c'
+ 14. }
+(503,844 missing values generated)
+(0 real changes made)
+(119,669 real changes made)
+(163,955 real changes made)
+(105,996 real changes made)
+(67,276 real changes made)
+(39,567 real changes made)
+
+. 
+. 
+. /*----------------------------------------------------------------------------*/                    
+>                                                                                                     
+>                         
+. 
+. /*merge ID　AREA_NO_I*/
+. sort ID
+
+. merge m:m ID using "$datapath\ID.dta",nogen keep(master match) keepusing(ID AREA_NO_I)
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                         8,470
+        from master                     8,470  
+        from using                          0  
+
+    matched                           495,374  
+    -----------------------------------------
+
+. 
+. /*百萬人次裡面的地區代碼 是city98*/
+. qui gen cityno98 = AREA_NO_I
+
+. sort cityno98 
+
+. merge m:1 cityno98 using "D:\User_Data\Desktop\kan-2\1_Million\CD_townshipnumber98_20200512.dta",nog
+> en keep(master match) 
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                         8,470
+        from master                     8,470  
+        from using                          0  
+
+    matched                           495,374  
+    -----------------------------------------
+
+. 
+. sort countytown
+
+. merge m:1 countytown using "D:\User_Data\Desktop\kan-2\1_Million\Taiwan_Presidential_Election_Data_B
+> Ytown_2004.dta",nogen keep(master match) 
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                       207,029
+        from master                   207,029  
+        from using                          0  
+
+    matched                           296,815  
+    -----------------------------------------
+
+. 
+. qui gen DDPtownP  = DDPtown/validtown
+
+. qui gen KMTtownP  = KMTtown/validtown
+
+. 
+. sum DDPtownP 
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+    DDPtownP |    296,815    .4884107    .0999703   .0486244   .7337663
+
+. cap drop  qDDPtownP
+
+. qui xtile qDDPtownP  = DDPtownP ,nq(4)
+
+. 
+. /*gap = 0 票數接近中間的50%*/
+. qui gen gap = 1 if qDDPtownP ==1 | qDDPtownP==4
+
+. qui replace gap = 0 if qDDPtownP ==2 | qDDPtownP==3
+
+. tab gap
+
+        gap |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |    147,983       49.86       49.86
+          1 |    148,832       50.14      100.00
+------------+-----------------------------------
+      Total |    296,815      100.00
+
+. /*----------------------------------------------------------------------------*/                    
+>                                                                                                     
+>                                         
+. gen Dpsy=cd_`year1'_spirit-cd_`year2'_spirit
+
+. gen Dcd =cd_`year1'-cd_`year2'
+
+. 
+. 
+. gen R1=R+date("`year1'0320","YMD")
+
+. gen Rw6=wofd(R1+1)
+
+. gen Rw3=wofd(R1-2)
+
+. gen Rw =wofd(R1)
+
+. 
+. cap drop  scd_`year1'
+
+. cap drop  scd_`year2'
+
+. tostring Rw6, gen(W6)
+W6 generated as str4
+
+. tostring Rw3, gen(W3)
+W3 generated as str4
+
+. xxxxxxxxxxxxxx
+command xxxxxxxxxxxxxx is unrecognized
+r(199);
+
+end of do-file
+
+r(199);
+

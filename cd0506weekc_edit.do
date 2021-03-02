@@ -4,7 +4,7 @@
 /*----------------------------------------------------------------------------*/
 clear
 set more off
-set max_memory 20g			  
+set max_memory 40g			  
 cap log c
 
 // cd "D:\User_Data\Desktop\kan-2"
@@ -196,10 +196,10 @@ merge m:m ID using "$datapath\ID.dta",nogen keep(master match) keepusing(ID AREA
 /*百萬人次裡面的地區代碼 是city98*/
 qui gen cityno98 = AREA_NO_I
 sort cityno98 
-merge m:1 cityno98 using "CD_townshipnumber98_20200512.dta",nogen keep(master match) 
+merge m:1 cityno98 using "D:\User_Data\Desktop\kan-2\1_Million\CD_townshipnumber98_20200512.dta",nogen keep(master match) 
 
 sort countytown
-merge m:1 countytown using "Taiwan_Presidential_Election_Data_BYtown_2004.dta",nogen keep(master match) 
+merge m:1 countytown using "D:\User_Data\Desktop\kan-2\1_Million\Taiwan_Presidential_Election_Data_BYtown_2004.dta",nogen keep(master match) 
 
 qui gen DDPtownP  = DDPtown/validtown
 qui gen KMTtownP  = KMTtown/validtown
@@ -227,7 +227,7 @@ cap drop  scd_`year2'
 tostring Rw6, gen(W6)
 tostring Rw3, gen(W3)
 
-gen IDW6=ID+W6
+/*gen IDW6=ID+W6
 bysort IDW6: egen s6Dcd=mean(Dcd)
 bysort IDW6: egen s6Dpsy=mean(Dpsy)
 bysort IDW6: egen s6cd_`year1'=mean(cd_`year1')
@@ -248,7 +248,7 @@ bysort IDW3: egen s3cd_`year1'=mean(cd_`year1')
 bysort IDW3: egen s3cd_`year2'=mean(cd_`year2')
 bysort IDW3: egen s3cd_`year1'_spirit=mean(cd_`year1'_spirit)
 bysort IDW3: egen s3cd_`year2'_spirit=mean(cd_`year2'_spirit)
-bysort IDW3: gen Wday3=_n
+bysort IDW3: gen Wday3=_n */
 
 sum Rw3 if R==0
 local Rw3_0=r(mean)
