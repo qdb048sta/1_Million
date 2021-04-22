@@ -12,11 +12,11 @@ cap log c
 global log "cd20210211weekd_Sep"
 local log "$log"
 
-log using "$log", text replace
+log using "D:\User_Data\Desktop\kan-2\1_Million\data\dataset\\$log", text replace
 
 
 // global datapath "F:\1Million\Documentation\"
-global datapath "D:\User_Data\Desktop\kan-2\1_Million\raw data"
+global datapath "D:\User_Data\Desktop\kan-2\1_Million\data\raw_data\"
 // global datapath "d:\1Million\Documentation\"
 global dayrange "60" 
 global wrange "8"
@@ -159,7 +159,7 @@ cap drop sex0
 egen IDN=count(ID),by(ID)
 tab IDN
 drop if IDN !=1+($dayrange)*2
-save CD`year1'_`year2_Sep',replace
+save "D:\User_Data\Desktop\kan-2\1_Million\data\dataset\CD`year1'_`year2'_Sep.dta" ,replace
 
 
 
@@ -200,10 +200,10 @@ merge m:m ID using "$datapath\ID.dta",nogen keep(master match) keepusing(ID AREA
 /*百萬人次裡面的地區代碼 是city98*/
 qui gen cityno98 = AREA_NO_I
 sort cityno98 
-merge m:1 cityno98 using "D:\User_Data\Desktop\kan-2\1_Million\raw data\CD_townshipnumber98_20200512.dta",nogen keep(master match) 
+merge m:1 cityno98 using "D:\User_Data\Desktop\kan-2\1_Million\data\raw_data\CD_townshipnumber98_20200512.dta",nogen keep(master match) 
 
 sort countytown
-merge m:1 countytown using "D:\User_Data\Desktop\kan-2\1_Million\raw data\Taiwan_Presidential_Election_Data_BYtown_2004.dta",nogen keep(master match) 
+merge m:1 countytown using "D:\User_Data\Desktop\kan-2\1_Million\data\raw_data\Taiwan_Presidential_Election_Data_BYtown_2004.dta",nogen keep(master match) 
 
 qui gen DDPtownP  = DDPtown/validtown
 qui gen KMTtownP  = KMTtown/validtown
@@ -232,7 +232,7 @@ tostring Rw3, gen(W3)
 
 di "$S_DATE $S_TIME	save temp dta"
 qui compress
-save "`log'_temp_Sep.dta",replace
+save "D:\User_Data\Desktop\kan-2\1_Million\data\dataset\\`log'_temp_Sep.dta",replace
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 /*gen IDW6=ID+W6
