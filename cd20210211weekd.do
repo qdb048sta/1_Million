@@ -12,7 +12,7 @@ cap log c
 global log "cd20210211weekd_Sep"
 local log "$log"
 
-log using "D:\User_Data\Desktop\kan-2\1_Million\data\dataset\\$log", text replace
+log using "D:\Google 雲端硬碟\result\1M_Sep_20210422\\$log", text replace
 
 
 // global datapath "F:\1Million\Documentation\"
