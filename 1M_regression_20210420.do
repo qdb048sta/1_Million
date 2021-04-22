@@ -26,7 +26,7 @@ drop Wp0 Wp8
 
 reg Dcd POST Wp* Wp*##POST Wn* Wn*##POST if FEMALE==0, cluster(township) 
 regsave,tstat pval ci
-save Weekly_Result_M, replace
+save "D:\User_Data\Desktop\kan-2\1_Million\result\Weekly_Result_M.dta", replace
 
 restore
 
@@ -34,7 +34,7 @@ preserve
 drop Wp0 Wp8
 reg Dcd POST Wp* Wp*##POST Wn* Wn*##POST if FEMALE==1, cluster(township) 
 regsave,tstat pval ci
-save Weekly_Result_F, replace
+save "D:\User_Data\Desktop\kan-2\1_Million\result\Weekly_Result_F.dta", replace
 
 restore
 /*20210421早上加上
