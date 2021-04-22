@@ -1,19 +1,30 @@
-use "Weekly_Result_M.dta"
+use "D:\User_Data\Desktop\kan-2\1_Million\result\Weekly_Result_M.dta",clear
 keep if strpos(var,"Wp") | strpos(var,"Wn")
+drop if coef==0
+set obs 16
 replace var="Wp0" in 16
 
 gen num_value=substr(var,3,3)
-gen WR=int(num_value) if strpos(var,"Wp")
-replace WR=-1*int(num_value) if strpos(var,"Wn")
-qui tw (lpoly W WR) (lpoly W95lb WR) (lpoly W95ub WR) ,legend(lab (1 "W") lab(2 "W 95 Lower Bound") lab(3 "W 95 Upper Bound")) xline(1) yline(0) xlabel(-8 "Wn8" -7 "Wn7" -8 "Wn8" -6 "Wn6" -5 "Wn5" -4 "Wn4" -3 "Wn3" -2 "Wn2" -1 "Wn1" 1 "Wp1" 2 "Wp2" 3 "Wp3" 4 "Wp4" 5 "Wp5" 6 "Wp6" 7 "Wp7" 8 "Wp8")
+destring(num_value),replace
+gen WR=num_value //if strpos(var,"Wp")
+replace WR=-WR if strpos(var,"Wn")
+gsort-WR
+qui tw (lpoly coef WR) (lpoly ci_lower WR) (lpoly ci_upper WR) ,legend(lab (1 "W") lab(2 "W 95 Lower Bound") lab(3 "W 95 Upper Bound")) xline(0) yline(0) xlabel(-8 "8 Weeks Before" -7 "7 Weeks Before" -6 "6 Weeks Before" -5 "5 Weeks Before" -4 "4 Weeks Before" -3 "3 Weeks Before" -2 "2 Weeks Before" -1 "1 Weeks Before" 0 "Election Week" 1 "1 Weeks After" 2 "2 Weeks After" 3 "3 Weeks After" 4 "4 Weeks After" 5 "5 Weeks After" 6 "6 Weeks After" 7 "7 Weeks After",ang(60)) title("Dcd Change Weekly")
+graph export "D:\User_Data\Desktop\kan-2\1_Million\result\Weekly_Change_M.png", as(png) name("Graph")
 
-use "Weekly_Result_F.dta"
-keep if strpos(var,"Wp") | strpos(var,"Wn") 
+use "D:\User_Data\Desktop\kan-2\1_Million\result\Weekly_Result_F.dta",clear
+keep if strpos(var,"Wp") | strpos(var,"Wn")
+drop if coef==0
+set obs 16
 replace var="Wp0" in 16
-gen num_value=substr(var,3,3)
-gen WR=int(num_value) if strpos(var,"Wp")
-replace WR=-1*int(num_value) if strpos(var,"Wn")
 
-qui tw (lpoly coef WR) (lpoly W95lb WR) (lpoly W95ub WR) ,legend(lab (1 "W") lab(2 "W 95 Lower Bound") lab(3 "W 95 Upper Bound")) xline(1) yline(0) xlabel(-8 "Wn8" -7 "Wn7" -8 "Wn8" -6 "Wn6" -5 "Wn5" -4 "Wn4" -3 "Wn3" -2 "Wn2" -1 "Wn1" 1 "Wp1" 2 "Wp2" 3 "Wp3" 4 "Wp4" 5 "Wp5" 6 "Wp6" 7 "Wp7" 8 "Wp8")
+gen num_value=substr(var,3,3)
+destring(num_value),replace
+gen WR=num_value //if strpos(var,"Wp")
+replace WR=-WR if strpos(var,"Wn")
+gsort-WR
+qui tw (lpoly coef WR) (lpoly ci_lower WR) (lpoly ci_upper WR) ,legend(lab (1 "W") lab(2 "W 95 Lower Bound") lab(3 "W 95 Upper Bound")) xline(0) yline(0) xlabel(-8 "8 Weeks Before" -7 "7 Weeks Before" -6 "6 Weeks Before" -5 "5 Weeks Before" -4 "4 Weeks Before" -3 "3 Weeks Before" -2 "2 Weeks Before" -1 "1 Weeks Before" 0 "Election Week" 1 "1 Weeks After" 2 "2 Weeks After" 3 "3 Weeks After" 4 "4 Weeks After" 5 "5 Weeks After" 6 "6 Weeks After" 7 "7 Weeks After",ang(60)) title("Dcd Change Weekly")
+graph export "D:\User_Data\Desktop\kan-2\1_Million\result\Weekly_Change_F.png", as(png) name("Graph")
+
 
 
