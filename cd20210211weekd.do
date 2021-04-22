@@ -9,14 +9,14 @@ cap log c
 
 // cd "D:\User_Data\Desktop\kan-2"
 
-global log "cd20210211weekd"
+global log "cd20210211weekd_Sep"
 local log "$log"
 
 log using "$log", text replace
 
 
 // global datapath "F:\1Million\Documentation\"
-global datapath "D:\User_Data\Desktop\kan-2\1_Million\"
+global datapath "D:\User_Data\Desktop\kan-2\1_Million\raw data"
 // global datapath "d:\1Million\Documentation\"
 global dayrange "60" 
 global wrange "8"
@@ -27,14 +27,14 @@ local year2=2005
 local yr1=substr("`year1'",3,2)
 local yr2=substr("`year2'",3,2)
 if `year2'==2006{
-                   local march20="0318"
+                   local march20="0918"
                 }
 if `year2'==2005{
-                   local march20="0319"
+                   local march20="0917"
                 }
 
-// local datatype = "temp"
-local datatype = "all"
+ local datatype = "temp"
+//local datatype = "all"
 
 global dataCD04temp "CD`year1'_one_tenth.dta"
 global dataCD04all  "CD`year1'.dta"
@@ -49,7 +49,7 @@ preserve
 // gen R1=date(FUNC_DATE,"YMD")
 // gen Rw6=wofd(R1-2)
 //gen Rw =wofd(R1)
-gen R=date(FUNC_DATE,"YMD")-date("`year1'0320","YMD")
+gen R=date(FUNC_DATE,"YMD")-date("`year1'0918","YMD")
 gen abs_R=abs(R)
 keep if abs_R<=$dayrange
 sort FUNC_DATE
@@ -90,7 +90,7 @@ use $datapath\${dataCD04`datatype'} ,clear
 gen R1=date(FUNC_DATE,"YMD")
 gen Rw6=wofd(R1-2)
 gen Rw =wofd(R1)
-gen R=date(FUNC_DATE,"YMD")-date("`year1'0320","YMD")
+gen R=date(FUNC_DATE,"YMD")-date("`year1'0918","YMD")
 gen abs_R=abs(R)
 keep if abs_R<=$dayrange
 global spirit = "290/319 319"
@@ -159,7 +159,7 @@ cap drop sex0
 egen IDN=count(ID),by(ID)
 tab IDN
 drop if IDN !=1+($dayrange)*2
-save CD`year1'_`year2',replace
+save CD`year1'_`year2_Sep',replace
 
 
 
@@ -178,8 +178,8 @@ foreach age of global age{
 local `age'_min  = `year1' - `age'
 local `age'_max  = `year1' - (`age'+10)
 
-scalar min_`age'=date("`year1'0320","YMD")-date("``age'_min'0320","YMD")
-scalar max_`age'=date("`year1'0320","YMD")-date("``age'_max'0320","YMD")
+scalar min_`age'=date("`year1'0918","YMD")-date("``age'_min'0918","YMD")
+scalar max_`age'=date("`year1'0918","YMD")-date("``age'_max'0918","YMD")
 local c=substr("`age'",1,1)
 local age1=`age'+9 + (`c'==7)*20
 local gr="gen"
@@ -200,10 +200,10 @@ merge m:m ID using "$datapath\ID.dta",nogen keep(master match) keepusing(ID AREA
 /*百萬人次裡面的地區代碼 是city98*/
 qui gen cityno98 = AREA_NO_I
 sort cityno98 
-merge m:1 cityno98 using "D:\User_Data\Desktop\kan-2\1_Million\CD_townshipnumber98_20200512.dta",nogen keep(master match) 
+merge m:1 cityno98 using "D:\User_Data\Desktop\kan-2\1_Million\raw data\CD_townshipnumber98_20200512.dta",nogen keep(master match) 
 
 sort countytown
-merge m:1 countytown using "D:\User_Data\Desktop\kan-2\1_Million\Taiwan_Presidential_Election_Data_BYtown_2004.dta",nogen keep(master match) 
+merge m:1 countytown using "D:\User_Data\Desktop\kan-2\1_Million\raw data\Taiwan_Presidential_Election_Data_BYtown_2004.dta",nogen keep(master match) 
 
 qui gen DDPtownP  = DDPtown/validtown
 qui gen KMTtownP  = KMTtown/validtown
@@ -220,8 +220,7 @@ tab gap
 gen Dpsy=cd_`year1'_spirit-cd_`year2'_spirit
 gen Dcd =cd_`year1'-cd_`year2'
 
-
-gen R1=R+date("`year1'0320","YMD")
+gen R1=R+date("`year1'0918","YMD")
 gen Rw6=wofd(R1+1)
 gen Rw3=wofd(R1-2)
 gen Rw =wofd(R1)
@@ -233,7 +232,8 @@ tostring Rw3, gen(W3)
 
 di "$S_DATE $S_TIME	save temp dta"
 qui compress
-save "`log'_temp.dta",replace
+save "`log'_temp_Sep.dta",replace
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 /*gen IDW6=ID+W6
 bysort IDW6: egen s6Dcd=mean(Dcd)
