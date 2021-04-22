@@ -33,8 +33,8 @@ if `year2'==2005{
                    local march20="0917"
                 }
 
- local datatype = "temp"
-//local datatype = "all"
+//local datatype = "temp"
+local datatype = "all"
 
 global dataCD04temp "CD`year1'_one_tenth.dta"
 global dataCD04all  "CD`year1'.dta"
