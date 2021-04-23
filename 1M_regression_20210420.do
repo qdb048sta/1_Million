@@ -1,4 +1,4 @@
-log using "D:\Google 雲端硬碟\result\1M_regression_reuslt_20210420\1Mregression_20210421_Weekly.log",replace
+log using "D:\Google 雲端硬碟\result\1M_regression_reuslt_20210420\1Mregression_20210421_Weekly_Sep.log",replace
 set max_memory 80g	
 use "D:\User_Data\Desktop\kan-2\1_Million\data\dataset\cd20210211weekd_Sep_temp_Sep.dta",clear
 //gen FEMALE FOR NEW DATASET 20210422
